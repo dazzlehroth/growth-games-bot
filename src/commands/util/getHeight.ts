@@ -9,11 +9,10 @@ module.exports = {
 
         const userId = interaction.user.id;
 
-
-        let user:any = await dbSelectObject('users', {user_id: userId});
+        let user:any = await dbSelectObject('players', {discord_user_id: userId});
 
         if (user === null || user === undefined) {
-            await interaction.reply('User Not found')
+            await interaction.reply('Player Not found')
         } else {
             await interaction.reply(`Your current height is ${user.height} "Generic Height Units"`)
         }
