@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3'
 
-const SqlString = require('sql-string');
+// const SqlString = require('sql-string');
 
 /*****************************************************************************************
  ****************************** DB Initializer
@@ -24,10 +24,11 @@ const db = new sqlite3.Database('DB.sqlite', (err) => {
  */
 function constructWhereCondition(conditions: Object): string {
 
-    let whereStatement = "";
-    console.log(conditions)
+    if (Object.keys(conditions).length === 0)
+        return ""
 
-    //TODO: Handle other comparisons than equals
+    let whereStatement = "WHERE ";
+
     for (let condition of Object.entries(conditions)) {
 
         //Check start condition value to see if we defined the comparator, add = to start if we did not
@@ -42,11 +43,11 @@ function constructWhereCondition(conditions: Object): string {
         }
 
 
-        whereStatement += `'${condition[0]}' = ${SqlString.escape(condition[1])} AND`;
+        whereStatement += `${condition[0]} ${(condition[1])} AND `;
     }
 
     //Snap off the last AND
-    return whereStatement.substring(0, whereStatement.length - 4)
+    return whereStatement.substring(0, whereStatement.length - 5)
 
 }
 
@@ -64,7 +65,7 @@ export async function dbInsert(tableName: string, data: Object) {
     return new Promise<void>(async (resolve, reject) => {
 
         let columns = Object.keys(data).flat();
-        let values = SqlString.escape(Object.values(data));
+        let values = Object.values(data).flat();
 
         const query = `INSERT INTO ${tableName} (${columns})
                        values (${values})` //Escaped above
@@ -83,12 +84,13 @@ export async function dbInsert(tableName: string, data: Object) {
 }
 
 
+
 /**
  * @description Gets first record from table matching given criteria
  * @param tableName
  * @param conditions
  */
-export async function dbSelectRow(tableName: string, conditions: Object) {
+export async function dbSelectRowSingle(tableName: string, conditions: Object) {
     return new Promise((resolve, reject) => {
 
         const query = `SELECT *
@@ -96,12 +98,9 @@ export async function dbSelectRow(tableName: string, conditions: Object) {
                        WHERE ${constructWhereCondition(conditions)}`;
 
         try {
-            let result
+            console.log(query);
             db.get(query, (err, response) => {
-
-                console.log(response)
-                if (response === null || response === undefined)
-                    reject();
+                console.log(response);
                 resolve(response);
             })
         } catch (e) {
@@ -110,13 +109,39 @@ export async function dbSelectRow(tableName: string, conditions: Object) {
     })
 }
 
-export async function dbUpdateRecordSingle(table: string, id: number, data: Object) {
+
+
+/**
+ * @description Gets  all records from table matching given criteria
+ * @param tableName
+ * @param conditions
+ */
+export async function dbSelectRowsAll(tableName: string, conditions: Object = {}) {
+    return new Promise<Array<object>>((resolve, reject) => {
+
+        const query = `SELECT *
+                       FROM ${tableName}
+                       ${constructWhereCondition(conditions)}`;
+
+        try {
+            db.all(query, (err: Error, response:Array<Object>) => {
+
+                resolve(response);
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+
+export async function dbUpdateRecordByID(table: string, id: number, dataToChange: Object) {
     return new Promise<void>((resolve, reject)  => {
 
         let setStatement = ""
 
-        for (let item of Object.keys(data)) {
-            setStatement += `${item[0]} = ${SqlString.escape(item[1])}`
+        for (let item of Object.entries(dataToChange)) {
+            setStatement += `${item[0]} = ${item[1]}`
         }
 
         const query = `UPDATE ${table} SET ${setStatement} WHERE id = ${id}`
