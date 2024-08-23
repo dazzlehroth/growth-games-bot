@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dayjs": "^1.11.13",
     "discord.js": "^14.15.3",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
