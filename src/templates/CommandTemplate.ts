@@ -1,3 +1,5 @@
+//@ts-nocheck
+/**
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
 
 
@@ -10,3 +12,4 @@ module.exports = {
 
     }
 }
+ */
