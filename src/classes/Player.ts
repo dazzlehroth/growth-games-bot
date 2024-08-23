@@ -15,7 +15,7 @@ enum junkSize {
 
 export class Player {
 
-    id = 0
+    databaseID = 0
     discordUserID = 0
     guildID = 0
     height = 0
@@ -30,30 +30,12 @@ export class Player {
 
     }
 
-    constructor(data: UserData) {
+    constructor(data: Object) {
 
-        this.id = data.id;
-        this.discordUserID = data.discord_user_id
-        this.guildID = data.guild_id
-        this.height = data.height
-        this.changePref = data.change_pref
-        this.changeFactor = data.change_factor
-        this.dickSize = data.dick_size
-        this.ballSize = data.ball_size
+        Object.assign(this, data)
 
     }
 
 
 }
 
-
-interface UserData {
-    id: number
-    discord_user_id: number
-    guild_id: number
-    height: number
-    change_pref: ChangePreference
-    change_factor: number
-    dick_size: junkSize
-    ball_size: junkSize
-}

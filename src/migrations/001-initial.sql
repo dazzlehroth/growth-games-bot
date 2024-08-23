@@ -1,7 +1,12 @@
-CREATE TABLE IF NOT EXISTS players ('id' INTEGER primary key autoincrement , 'discord_user_id' INTEGER, 'guild_id' INTEGER, 'height' integer default 6, 'change_pref' INT default 1, 'change_factor' REAL default 1, 'dick_size' INT DEFAULT 3, 'ball_size' INT default 3);
-CREATE INDEX IF NOT EXISTS guild_id_index ON players(guild_id);
-CREATE UNIQUE INDEX IF NOT EXISTS  user_guild_index on players(guild_id, discord_user_id);
-CREATE INDEX IF NOT EXISTS user_pref_index on players(guild_id, change_pref);
 
-CREATE TABLE IF NOT EXISTS guild_settings ('id' INTEGER primary key autoincrement , 'guild_id' INTEGER, 'property' TEXT, 'string_value' TEXT, int_value INT);
-CREATE INDEX IF NOT EXISTS guild_id_index ON guild_settings(guild_id);
+
+-- Players Table
+CREATE TABLE IF NOT EXISTS players ('id' INTEGER primary key autoincrement , 'discordUserID' TEXT, 'guildID' TEXT, 'height' integer default 6, 'changePref' INT default 1, 'changeFactor' REAL default 1, 'dickSize' INT DEFAULT 3, 'ballSize' INT default 3);
+CREATE INDEX IF NOT EXISTS guildIDIndex ON players(guildID);
+CREATE UNIQUE INDEX IF NOT EXISTS  userGuildIndex on players(guildID, discordUserID);
+CREATE INDEX IF NOT EXISTS userPrefIndex on players(guildID, changePref);
+
+-- Guild Settings Table
+CREATE TABLE IF NOT EXISTS guildSettings ('id' INTEGER primary key autoincrement , 'guildId' TEXT, 'property' TEXT, 'stringValue' TEXT, intValue INT, boolVal INT);
+CREATE INDEX IF NOT EXISTS guildIDIndex ON guildSettings(guildId);
+CREATE UNIQUE INDEX IF NOT EXISTS guildPropertyIndex on guildSettings(guildId, property)
