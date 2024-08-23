@@ -1,22 +1,21 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
 import {dbInsert} from "../../hooks/useDatabase";
+import {getDiscordGuildSettingsObject, getGuildPlayers} from "../../hooks/useDBObjects";
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('testgrow')
-        .setDescription('Replies with test growth'),
+        .setName('testcommand')
+        .setDescription('Does Whatever things I am wanting to test, DO NOT INCLUDE IN LIVE BUILDS'),
     async execute(interaction: CommandInteraction): Promise<void> {
-       await interaction.reply('**zapp!**')
 
+        // const settingsObject = await getDiscordGuildSettingsObject(interaction.guild!.id)
+        // console.log(settingsObject)
 
-        let dataToInsert = {
-           user_id: interaction.user.id,// @ts-ignore
-            guild_id: interaction.guild.id ?? null,
-            height: 4
-        }
+        const players = await getGuildPlayers(interaction.guild!.id, {changePref: 1})
 
+        console.log(players)
 
-        dbInsert('users', dataToInsert)
+        await interaction.reply('Did it, I think? Tried my best at least')
 
     }
 }
