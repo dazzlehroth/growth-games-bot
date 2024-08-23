@@ -9,7 +9,6 @@ export async function getPlayerObject(discordPlayerId:string, guildId: string): 
         try{
             let playerDBRecord = await dbSelectRowSingle('players',{'discordUserId': discordPlayerId, 'guildId': guildId })as Object ;
 
-            console.log(playerDBRecord);
 
             const playerObject= new Player(playerDBRecord)
 
@@ -33,7 +32,7 @@ export async function getGuildPlayers(guildId:string, conditions:Object = {}): P
 
             conditions = {...conditions, guildId};
             let playerRecords = await dbSelectRowsAll('players', conditions) as Array<Object>
-            // console.log(playerRecords);
+
 
             let playerObjects: Array<Player> = [];
             playerRecords.map((playerRecordSingle:Object) => {

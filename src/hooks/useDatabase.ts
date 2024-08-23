@@ -98,7 +98,7 @@ export async function dbSelectRowSingle(tableName: string, conditions: Object) {
                        ${constructWhereCondition(conditions)}`;
 
         try {
-            console.log(query);
+
             db.get(query, (err, response) => {
                 console.log(response);
                 resolve(response);
