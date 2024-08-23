@@ -1,5 +1,7 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
-import {dbInsert, dbSelectObject} from "../../hooks/useDatabase";
+import {dbSelectRow} from "../../hooks/useDatabase";
+import {getPlayerObject} from "../../hooks/useDBObjects";
+
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,8 +10,15 @@ module.exports = {
     async execute(interaction: CommandInteraction): Promise<void> {
 
 
+        const userID = interaction.user.id;
+        const guildID = interaction.guild!.id;
 
-//TODO Find user and update their record with growth
+        try {
+            await getPlayerObject(userID, guildID)
+        } catch (error) {
+
+        }
+
 
 
 
