@@ -1,7 +1,7 @@
 import {Player} from "../classes/Player";
 import {dbSelectRow} from "./useDatabase";
 
-export async function getPlayerObject(discordPlayerId:number, guildId: number): Promise<Player|null> {
+export async function getPlayerObject(discordPlayerId:string, guildId: string): Promise<Player|null> {
 
     return new Promise<null|Player>(async(resolve, reject) => {
 
