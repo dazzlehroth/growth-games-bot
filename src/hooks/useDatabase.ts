@@ -95,7 +95,7 @@ export async function dbSelectRowSingle(tableName: string, conditions: Object) {
 
         const query = `SELECT *
                        FROM ${tableName}
-                       WHERE ${constructWhereCondition(conditions)}`;
+                       ${constructWhereCondition(conditions)}`;
 
         try {
             console.log(query);
