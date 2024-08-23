@@ -1,5 +1,6 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
-import {dbInsert, dbSelectObject} from "../../hooks/useDatabase";
+import {dbInsert, dbSelectRowSingle} from "../../hooks/useDatabase";
+import {Player} from "../../classes/Player";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,13 +16,16 @@ module.exports = {
             return ;
         }
 
-        let user:any = await dbSelectObject('users', {discord_user_id: userId, guild_id: guildId});
+        let user:any = await dbSelectRowSingle('users', {discordUserID: userId, guildID: guildId});
 
         if (user === null || user === undefined) {
             //User not Found, add them
 
-            await dbInsert('players', {discord_user_id: userId, guild_id: guildId});
+            let newPlayer = new Player({discordUserID: userId, guildID: guildId})
 
+            await dbInsert('players', {discordUserID: userId, guildID: guildId});
+
+            await interaction.reply(`Registered Successfully"`)
 
 
         } else {
