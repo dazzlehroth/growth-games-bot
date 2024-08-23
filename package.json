@@ -12,6 +12,8 @@
   "description": "",
   "dependencies": {
     "discord.js": "^14.15.3",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
     "typescript": "^5.5.4"
   },
   "devDependencies": {

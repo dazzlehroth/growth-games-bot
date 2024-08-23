@@ -1,11 +1,9 @@
 import {
-    BaseInteraction, ChatInputCommandInteraction,
     Client,
     ClientOptions,
     Collection,
     Events,
     GatewayIntentBits,
-    SlashCommandBuilder
 } from "discord.js";
 import {token} from './config.json';
 
@@ -35,19 +33,24 @@ client.once(Events.ClientReady, c => {
 client.login(token)
 
 for (const folder of commandFolders) {
+    let commandsAdded = 0
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
+
         // Set a new item in the Collection with the key as the command name and the value as the exported module
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
-            console.log("Registered command: ", command);
+            commandsAdded++;
+            // console.log("Registered command: ", command);
         } else {
             console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
         }
+
     }
+    console.log(`${commandsAdded} / commands registered successfully.`);
 }
 
 
