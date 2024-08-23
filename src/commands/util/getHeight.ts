@@ -1,5 +1,5 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
-import {dbSelectObject} from "../../hooks/useDatabase";
+import {dbSelectRowSingle} from "../../hooks/useDatabase";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,7 +9,7 @@ module.exports = {
 
         const userId = interaction.user.id;
 
-        let user:any = await dbSelectObject('players', {discord_user_id: userId});
+        let user:any = await dbSelectRowSingle('players', {discord_user_id: userId});
 
         if (user === null || user === undefined) {
             await interaction.reply('Player Not found')
