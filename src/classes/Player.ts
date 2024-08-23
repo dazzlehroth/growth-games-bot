@@ -1,3 +1,5 @@
+import {dbUpdateRecordByID} from "../hooks/useDatabase";
+
 enum ChangePreference {
     remain,
     grow,
@@ -15,7 +17,7 @@ enum junkSize {
 
 export class Player {
 
-    databaseID = 0
+    id = 0
     discordUserID = 0
     guildID = 0
     height = 0
@@ -24,18 +26,30 @@ export class Player {
     dickSize: junkSize = 3
     ballSize: junkSize = 3
 
-    grow(value: number) {
+    async grow(value: number) {
+        return new Promise<number>(async(resolve, reject) => {
 
-        this.height = value * this.changeFactor
+            const newHeight = this.height + (value * this.changeFactor)
 
+            try {
+                await dbUpdateRecordByID('players', this.id, {height: newHeight})
+                this.height = newHeight
+                resolve(newHeight)
+            } catch (e) {
+                reject();
+            }
+
+
+        })
     }
 
-    constructor(data: Object) {
+        constructor(data:Object)
 
-        Object.assign(this, data)
+        {
+
+            Object.assign(this, data)
+
+        }
+
 
     }
-
-
-}
-
