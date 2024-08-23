@@ -1,0 +1,77 @@
+import {
+    BaseInteraction, ChatInputCommandInteraction,
+    Client,
+    ClientOptions,
+    Collection,
+    Events,
+    GatewayIntentBits,
+    SlashCommandBuilder
+} from "discord.js";
+import {token} from './config.json';
+
+import fs from 'node:fs';
+import path from "node:path";
+
+
+class ClientExtended extends Client{
+    commands  = new Collection()
+    constructor(options:  ClientOptions) {
+        super(options);
+    }
+}
+
+const client = new ClientExtended({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]});
+
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
+
+
+client.once(Events.ClientReady, c => {
+    console.log(`Ready! Logged in as ${c.user.tag}`);
+    c.user.setPresence({activities:[{name:"Testing one two three"}]})
+
+});
+
+client.login(token)
+
+for (const folder of commandFolders) {
+    const commandsPath = path.join(foldersPath, folder);
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        const command = require(filePath);
+        // Set a new item in the Collection with the key as the command name and the value as the exported module
+        if ('data' in command && 'execute' in command) {
+            client.commands.set(command.data.name, command);
+            console.log("Registered command: ", command);
+        } else {
+            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+        }
+    }
+}
+
+
+
+client.on(Events.InteractionCreate, async (interaction: any) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    console.log(interaction.constructor.name)
+
+    const command = interaction.client.commands.get(interaction.commandName);
+
+    if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`);
+        return;
+    }
+
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+        } else {
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        }
+    }
+});
