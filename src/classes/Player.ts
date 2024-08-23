@@ -1,19 +1,5 @@
 import {dbUpdateRecordByID} from "../hooks/useDatabase";
-
-enum ChangePreference {
-    remain,
-    grow,
-    shrink
-}
-
-enum junkSize {
-    micro,
-    small,
-    medium,
-    large,
-    hyper
-}
-
+import {ChangePreference, junkSize} from "./Enums";
 
 export class Player {
 
