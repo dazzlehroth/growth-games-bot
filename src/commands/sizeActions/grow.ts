@@ -1,11 +1,10 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
-import {dbSelectRow} from "../../hooks/useDatabase";
 import {getPlayerObject} from "../../hooks/useDBObjects";
 
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('testgrow')
+        .setName('grow')
         .setDescription('Replies with test growth'),
     async execute(interaction: CommandInteraction): Promise<void> {
 
@@ -14,8 +13,18 @@ module.exports = {
         const guildID = interaction.guild!.id;
 
         try {
-            await getPlayerObject(userID, guildID)
+
+            const player = await getPlayerObject(userID, guildID);
+
+           let newHeight = await player.grow(1);
+
+           await interaction.reply(`ZAPP! Your new height is ${newHeight} generic measurement units`);
+
+
+
         } catch (error) {
+
+        console.log(error)
 
         }
 
