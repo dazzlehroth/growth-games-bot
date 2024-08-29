@@ -11,9 +11,11 @@ export class Player {
     changeFactor = 1
     dickSize: junkSize = 3
     ballSize: junkSize = 3
+    chestSize: junkSize = 3
+    assSize: junkSize = 3
 
     async grow(value: number) {
-        return new Promise<number>(async(resolve, reject) => {
+        return new Promise<number>(async (resolve, reject) => {
 
             const newHeight = this.height + (value * this.changeFactor)
 
@@ -29,13 +31,52 @@ export class Player {
         })
     }
 
-        constructor(data:Object)
+    async adjustJunk(part: number, newSize: number) {
+        return new Promise<void>(async (resolve, reject) => {
 
-        {
+            let dbField = ""
 
-            Object.assign(this, data)
+            switch (part) {
+                case 1:
+                    this.dickSize = newSize
+                    dbField = "dickSize"
+                    break;
+                case 2:
+                    this.ballSize = newSize
+                    dbField = "ballSize"
+                    break;
+                case 3:
+                    this.chestSize = newSize
+                    dbField = "chestSize"
+                    break;
+                case 4:
+                    this.assSize = newSize
+                    dbField = "assSize"
+                    break;
+                default:
+                    reject();
+                    return;
 
-        }
+            }
+
+            try {
+                await dbUpdateRecordByID('players', this.id, {[dbField]: newSize})
+                resolve()
+            } catch (e) {
+                reject();
+            }
+
+
+        })
 
 
     }
+
+    constructor(data: Object) {
+
+        Object.assign(this, data)
+
+    }
+
+
+}
