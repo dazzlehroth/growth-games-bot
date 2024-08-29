@@ -1,7 +1,5 @@
 import {CommandInteraction, SlashCommandBuilder} from "discord.js";
 import {dbInsert, dbSelectRowSingle} from "../../hooks/useDatabase";
-import {Player} from "../../classes/Player";
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('register')
@@ -11,17 +9,16 @@ module.exports = {
         const userId = interaction.user.id;
         const guildId = interaction.guild!.id;
 
-        if (guildId === null) {
+        if (guildId === undefined || guildId === null) {
             await interaction.reply(`Could not identify which server you are on`)
             return ;
         }
 
         let user:any = await dbSelectRowSingle('users', {discordUserID: userId, guildID: guildId});
 
-        if (user === null || user === undefined) {
+        if (user === undefined || user === null) {
             //User not Found, add them
 
-            let newPlayer = new Player({discordUserID: userId, guildID: guildId})
 
             await dbInsert('players', {discordUserID: userId, guildID: guildId});
 
