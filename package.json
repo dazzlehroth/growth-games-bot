@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "npx nodemon",
-    "build": "rimraf ./build && tsc"
+    "build": "rimraf ./build && tsc",
+    "deployCommands": "rimraf ./build && tsc && node ./build/deployCommands.js"
   },
   "keywords": [],
   "author": "",
