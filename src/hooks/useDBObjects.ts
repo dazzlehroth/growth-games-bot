@@ -1,6 +1,6 @@
 import {Player} from "../classes/Player";
 import {dbSelectRowsAll, dbSelectRowSingle} from "./useDatabase";
-import {DatabaseGuildSettingsRecord, DiscordGuildSettings} from "../classes/DiscordGuildSettings";
+import {DatabaseGuildSettingsRecord, GuildSettings} from "../classes/GuildSettings";
 
 export async function getPlayerObject(discordPlayerId:string, guildId: string): Promise<Player> {
 
@@ -8,10 +8,7 @@ export async function getPlayerObject(discordPlayerId:string, guildId: string): 
 
         try{
             let playerDBRecord = await dbSelectRowSingle('players',{'discordUserId': discordPlayerId, 'guildId': guildId })as Object ;
-
-
             const playerObject= new Player(playerDBRecord)
-
             resolve(playerObject);
 
         } catch (e) {
@@ -19,14 +16,12 @@ export async function getPlayerObject(discordPlayerId:string, guildId: string): 
             reject()
         }
 
-
     })
 
 }
 
 export async function getGuildPlayers(guildId:string, conditions:Object = {}): Promise<Array<Player>> {
     return new Promise<Array<Player>>(async(resolve, reject) => {
-
 
         try {
 
@@ -45,23 +40,21 @@ export async function getGuildPlayers(guildId:string, conditions:Object = {}): P
             reject();
         }
 
-
     })
-
 
 }
 
 
-export async function getDiscordGuildSettingsObject(guildId: string): Promise<DiscordGuildSettings> {
+export async function getGuildSettingsObject(guildId: string): Promise<GuildSettings> {
 
-    return new Promise<DiscordGuildSettings>(async(resolve, reject) => {
+    return new Promise<GuildSettings>(async(resolve, reject) => {
 
         try{
             let settingsRecords = await dbSelectRowsAll('guildSettings',{'guildId': guildId }) as Array<DatabaseGuildSettingsRecord> ;
 
             console.log(settingsRecords);
 
-            const settingsObject = new DiscordGuildSettings(settingsRecords, guildId)
+            const settingsObject = new GuildSettings(settingsRecords, guildId)
 
             resolve(settingsObject);
 
