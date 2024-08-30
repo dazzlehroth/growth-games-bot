@@ -2,7 +2,7 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ChatInputCommandInteraction,
+    ChatInputCommandInteraction, CollectorFilter,
     EmbedBuilder,
     SlashCommandBuilder
 } from "discord.js";
@@ -13,6 +13,15 @@ const embed = new EmbedBuilder()
     .setTitle("Time to grow!")
     .setDescription("Choose your growth option \n \u200B \u200B")
     .addFields(
+        {
+            name: "Current Base Range",
+            value: "1ft to 2ft"
+        },
+        {
+            name: "\u200B",
+            value: "\u200B"
+        }
+        ,
         {
             name: "Small",
             value: "1x Multiplier \n 1 Hour Cooldown \u200B \u200B \u200B \u200B",
@@ -60,23 +69,38 @@ module.exports = {
 
 
         //First present the player with their options
-        await interaction.reply({embeds: [embed], ephemeral: true, components: [growthOptions]})
-
+        const response = await interaction.reply({embeds: [embed], ephemeral: true, components: [growthOptions]})
+        const collectorFilter:CollectorFilter<any> = i => i.user.id === interaction.user.id
 
         try {
+            const selection = await response.awaitMessageComponent({filter: collectorFilter, time: 15_000})
 
-            const player = await getPlayerObject(userID, guildID);
-
-            let newHeight = await player.grow(1);
-
-            await interaction.reply(`ZAPP! Your new height is ${newHeight} generic measurement units`);
-
-
+            await selection.update({content: `Selection confirmed, getting ready...`, components: []})
         } catch (error) {
-
-            console.log(error)
-
+            console.error(error)
+            await interaction.editReply({content: "No option selected, aborting (no cooldown triggered)", components: []})
+            return;
         }
+
+
+        //Option selected, time to do the thing
+
+
+
+        // try {
+        //
+        //     const player = await getPlayerObject(userID, guildID);
+        //
+        //     let newHeight = await player.grow(1);
+        //
+        //     await interaction.reply(`ZAPP! Your new height is ${newHeight} generic measurement units`);
+        //
+        //
+        // } catch (error) {
+        //
+        //     console.log(error)
+        //
+        // }
 
 
     }
